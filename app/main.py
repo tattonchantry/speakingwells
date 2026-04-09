@@ -67,6 +67,7 @@ def create_cardholder(cardholder: CardholderCreate, account_id: str = Depends(ge
     result = supabase.table("cardholders").insert({
         "account_id": account_id,
         "name": cardholder.name,
+        "color_scheme": cardholder.color_scheme,
         "slug": cardholder.slug,
         "photo_url": cardholder.photo_url,
         "card_message": cardholder.card_message
@@ -139,3 +140,16 @@ def get_qr_image(slug: str):
     buffer.seek(0)
     
     return StreamingResponse(buffer, media_type="image/png")
+
+@app.get("/setup")
+def setup():
+    return FileResponse("frontend/setup.html")
+
+@app.get("/slug-check/{slug}")
+def check_slug(slug: str):
+    result = supabase.table("cardholders").select("id").eq("slug", slug).execute()
+    return {"available": len(result.data) == 0}
+
+@app.get("/welcome")
+def welcome():
+    return FileResponse("frontend/welcome.html")

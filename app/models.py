@@ -50,9 +50,17 @@ class MessageResponse(BaseModel):
 # Card order models
 class CardOrderCreate(BaseModel):
     quantity: int
+    color_scheme: Optional[str] = "amber"
 
 class CardOrderResponse(BaseModel):
     id: UUID
     quantity: int
     status: str
     created_at: datetime
+
+class CardholderCreate(BaseModel):
+    name: str
+    slug: str
+    photo_url: Optional[str] = None
+    card_message: Optional[str] = "I want you to know I noticed you and I care about you. Have a great day!"
+    color_scheme: Optional[str] = "amber"

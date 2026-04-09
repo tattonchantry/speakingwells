@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Up Your Card - SpeakingWells</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            color: #3a2e1a;
+            background: linear-gradient(135deg, #fdf8ee 0%, #f5e6c0 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        nav {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e8a838;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 580px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            overflow: hidden;
+        }
+
+        .container-header {
+            background: #e8a838;
+            padding: 32px;
+            text-align: center;
+            color: white;
+        }
+
+        .container-header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .container-header p {
+            opacity: 0.92;
+            font-size: 16px;
+        }
+
+        .form-body {
+            padding: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #6b5a3a;
+            margin-bottom: 6px;
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #f5e6c0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #3a2e1a;
+            background: #fdf8ee;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #e8a838;
+        }
+
+        .form-group textarea {
+            height: 80px;
+            resize: none;
+        }
+
+        /* SLUG */
+        .slug-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .slug-prefix {
+            font-size: 14px;
+            color: #aaa;
+            white-space: nowrap;
+        }
+
+        .slug-status {
+            font-size: 13px;
+            margin-top: 6px;
+            min-height: 18px;
+        }
+
+        .slug-available { color: #27ae60; }
+        .slug-taken { color: #e83838; }
+
+        /* COLOR SCHEMES */
+        .schemes {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .scheme {
+            cursor: pointer;
+            border-radius: 12px;
+            border: 3px solid transparent;
+            overflow: hidden;
+            width: 80px;
+            text-align: center;
+            transition: border 0.2s;
+        }
+
+        .scheme.selected {
+            border-color: #3a2e1a;
+        }
+
+        .scheme-swatch {
+            height: 48px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .scheme-label {
+            font-size: 11px;
+            padding: 4px;
+            background: #fdf8ee;
+            color: #3a2e1a;
+        }
+
+        /* PREVIEW */
+        .preview {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #f5e6c0;
+            margin-top: 8px;
+        }
+
+        .preview-header {
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .preview-header h3 {
+            font-size: 20px;
+        }
+
+        .preview-body {
+            padding: 16px;
+            background: white;
+            font-size: 14px;
+            color: #3a2e1a;
+            text-align: center;
+        }
+
+        /* BUTTON */
+        button.submit {
+            width: 100%;
+            padding: 16px;
+            background: #e8a838;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 8px;
+        }
+
+        button.submit:hover { opacity: 0.88; }
+        button.submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .error { color: #e83838; font-size: 14px; margin-top: 12px; display: none; }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #f5e6c0;
+            margin: 24px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">SpeakingWells</a>
+    </nav>
+
+    <div class="container">
+        <div class="container-header">
+            <h1>Set Up Your Card</h1>
+            <p>Tell us about your loved one. This takes about 2 minutes.</p>
+        </div>
+
+        <div class="form-body">
+
+            <!-- NAME -->
+            <div class="form-group">
+                <label>Their First Name</label>
+                <span class="hint">This appears on the card and their personal page.</span>
+                <input type="text" id="name" placeholder="e.g. Brogan" oninput="updatePreview()">
+            </div>
+
+            <!-- SLUG -->
+            <div class="form-group">
+                <label>Their Personal URL</label>
+                <span class="hint">This is the web address on their QR code. Once set it cannot be changed.</span>
+                <div class="slug-row">
+                    <span class="slug-prefix">speakingwells.org/card/</span>
+                    <input type="text" id="slug" placeholder="brogan" oninput="checkSlug()">
+                </div>
+                <div class="slug-status" id="slug-status"></div>
+            </div>
+
+            <!-- MESSAGE -->
+            <div class="form-group">
+                <label>Card Message</label>
+                <span class="hint">What do you want their card to say? Or keep the default.</span>
+                <textarea id="message" oninput="updatePreview()">I want you to know I noticed you and I care about you. Have a great day!</textarea>
+            </div>
+
+            <hr class="divider">
+
+            <!-- COLOR SCHEME -->
+            <div class="form-group">
+                <label>Choose a Color Scheme</label>
+                <span class="hint">This is the color of their card page when someone scans the QR code.</span>
+                <div class="schemes">
+                    <div class="scheme selected" onclick="selectScheme('amber', this)">
+                        <div class="scheme-swatch" style="background: linear-gradient(135deg, #e8a838, #f5c460);"></div>
+                        <div class="scheme-label">Amber</div>
+                    </div>
+                    <div class="scheme" onclick="selectScheme('ocean', this)">
+                        <div class="scheme-swatch" style="background: linear-gradient(135deg, #2980b9, #5dade2);"></div>
+                        <div class="scheme-label">Ocean</div>
+                    </div>
+                    <div class="scheme" onclick="selectScheme('forest', this)">
+                        <div class="scheme-swatch" style="background: linear-gradient(135deg, #27ae60, #58d68d);"></div>
+                        <div class="scheme-label">Forest</div>
+                    </div>
+                    <div class="scheme" onclick="selectScheme('rose', this)">
+                        <div class="scheme-swatch" style="background: linear-gradient(135deg, #e8386a, #f1948a);"></div>
+                        <div class="scheme-label">Rose</div>
+                    </div>
+                    <div class="scheme" onclick="selectScheme('slate', this)">
+                        <div class="scheme-swatch" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);"></div>
+                        <div class="scheme-label">Slate</div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <!-- PREVIEW -->
+            <div class="form-group">
+                <label>Preview</label>
+                <span class="hint">This is what someone sees when they scan the QR code.</span>
+                <div class="preview">
+                    <div class="preview-header" id="preview-header" style="background: #e8a838;">
+                        <h3 id="preview-name">Hi! I'm Brogan</h3>
+                        <p id="preview-message" style="font-size: 13px; margin-top: 8px; opacity: 0.92;">I want you to know I noticed you and I care about you. Have a great day!</p>
+                    </div>
+                    <div class="preview-body">
+                        Someone would type their message here and send it to you.
+                    </div>
+                </div>
+            </div>
+
+            <div class="error" id="error"></div>
+            <button class="submit" onclick="submit()">Create My Card Page</button>
+
+        </div>
+    </div>
+
+    <script>
+        const API = 'https://speakingwells.org';
+        //const API = 'http://127.0.0.1:8000';
+
+        const schemeColors = {
+            amber: '#e8a838',
+            ocean: '#2980b9',
+            forest: '#27ae60',
+            rose: '#e8386a',
+            slate: '#6c5ce7'
+        };
+
+        let selectedScheme = 'amber';
+        let slugAvailable = false;
+        let slugTimer = null;
+
+        // Redirect if not logged in
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/';
+
+        function selectScheme(scheme, el) {
+            selectedScheme = scheme;
+            document.querySelectorAll('.scheme').forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('preview-header').style.background = schemeColors[scheme];
+        }
+
+        function updatePreview() {
+            const name = document.getElementById('name').value || 'Brogan';
+            const msg = document.getElementById('message').value;
+            document.getElementById('preview-name').textContent = `Hi! I'm ${name}`;
+            document.getElementById('preview-message').textContent = msg;
+        }
+
+        function checkSlug() {
+            const slug = document.getElementById('slug').value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+            document.getElementById('slug').value = slug;
+            const statusEl = document.getElementById('slug-status');
+
+            if (!slug) { statusEl.textContent = ''; slugAvailable = false; return; }
+
+            clearTimeout(slugTimer);
+            statusEl.textContent = 'Checking...';
+            statusEl.className = 'slug-status';
+
+            slugTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`${API}/slug-check/${slug}`);
+                    const data = await res.json();
+                    if (data.available) {
+                        statusEl.textContent = 'speakingwells.org/card/' + slug + ' is available!';
+                        statusEl.className = 'slug-status slug-available';
+                        slugAvailable = true;
+                    } else {
+                        statusEl.textContent = 'That URL is already taken. Try another.';
+                        statusEl.className = 'slug-status slug-taken';
+                        slugAvailable = false;
+                    }
+                } catch(e) {
+                    statusEl.textContent = 'Could not check availability.';
+                }
+            }, 500);
+        }
+
+        async function submit() {
+            const name = document.getElementById('name').value.trim();
+            const slug = document.getElementById('slug').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const errorEl = document.getElementById('error');
+
+            errorEl.style.display = 'none';
+
+            if (!name) { errorEl.textContent = 'Please enter a name.'; errorEl.style.display = 'block'; return; }
+            if (!slug) { errorEl.textContent = 'Please choose a URL.'; errorEl.style.display = 'block'; return; }
+            if (!slugAvailable) { errorEl.textContent = 'Please choose an available URL.'; errorEl.style.display = 'block'; return; }
+            if (!message) { errorEl.textContent = 'Please enter a card message.'; errorEl.style.display = 'block'; return; }
+
+            const btn = document.querySelector('button.submit');
+            btn.textContent = 'Creating your card...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API}/cardholder`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        name,
+                        slug,
+                        card_message: message,
+                        color_scheme: selectedScheme
+                    })
+                });
+
+                if (res.ok) {
+                    localStorage.setItem('slug', slug);
+                    window.location.href = '/welcome';
+                } else {
+                    const data = await res.json();
+                    errorEl.textContent = data.detail || 'Something went wrong.';
+                    errorEl.style.display = 'block';
+                    btn.textContent = 'Create My Card Page';
+                    btn.disabled = false;
+                }
+            } catch(e) {
+                errorEl.textContent = 'Connection error. Please try again.';
+                errorEl.style.display = 'block';
+                btn.textContent = 'Create My Card Page';
+                btn.disabled = false;
+            }
+        }
+    </script>
+
+</body>
+</html>
