@@ -33,7 +33,7 @@ def get_current_account(token: str = Depends(oauth2_scheme)):
 
 @app.get("/")
 def root():
-    return {"message": "SpeakingWells API is running"}
+    return FileResponse("frontend/index.html")
 
 @app.post("/register")
 def register(account: AccountCreate):
@@ -139,3 +139,7 @@ def get_qr_image(slug: str):
     buffer.seek(0)
     
     return StreamingResponse(buffer, media_type="image/png")
+
+@app.get("/")
+def home():
+    return FileResponse("frontend/index.html")

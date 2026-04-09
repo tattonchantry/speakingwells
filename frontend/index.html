@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeakingWells — Because everyone deserves to be noticed</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            color: #3a2e1a;
+            background: #fff;
+        }
+
+        /* NAV */
+        nav {
+            background: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f5e6c0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #e8a838;
+            text-decoration: none;
+        }
+
+        .nav-links a {
+            margin-left: 24px;
+            text-decoration: none;
+            color: #3a2e1a;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover { color: #e8a838; }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: #e8a838;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-family: inherit;
+        }
+
+        .btn:hover { opacity: 0.88; }
+
+        .btn-outline {
+            background: white;
+            color: #e8a838;
+            border: 2px solid #e8a838;
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, #fdf8ee 0%, #f5e6c0 100%);
+            padding: 80px 32px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            color: #3a2e1a;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .hero h1 span { color: #e8a838; }
+
+        .hero p {
+            font-size: 20px;
+            color: #6b5a3a;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* WHAT IS IT */
+        .what {
+            padding: 64px 32px;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .what h2 {
+            font-size: 32px;
+            color: #e8a838;
+            margin-bottom: 24px;
+        }
+
+        .what p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #5a4a2a;
+            max-width: 700px;
+            margin: 0 auto 16px;
+        }
+
+        .card-preview {
+            background: #fdf8ee;
+            border: 2px solid #f5e6c0;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 340px;
+            margin: 40px auto;
+            text-align: left;
+        }
+
+        .card-preview .banner {
+            background: #e8a838;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .card-preview p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #3a2e1a;
+        }
+
+        /* HOW IT WORKS */
+        .how {
+            background: #fdf8ee;
+            padding: 64px 32px;
+            text-align: center;
+        }
+
+        .how h2 {
+            font-size: 32px;
+            color: #e8a838;
+            margin-bottom: 48px;
+        }
+
+        .steps {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 220px;
+            max-width: 260px;
+        }
+
+        .step .number {
+            width: 56px;
+            height: 56px;
+            background: #e8a838;
+            color: white;
+            border-radius: 50%;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-weight: bold;
+        }
+
+        .step h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #3a2e1a;
+        }
+
+        .step p {
+            font-size: 15px;
+            color: #6b5a3a;
+            line-height: 1.6;
+        }
+
+        /* STORY */
+        .story {
+            padding: 64px 32px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .story h2 {
+            font-size: 32px;
+            color: #e8a838;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .quote {
+            background: #fdf8ee;
+            border-left: 4px solid #e8a838;
+            padding: 24px 28px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 32px;
+        }
+
+        .quote p {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #3a2e1a;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        .quote .attribution {
+            font-size: 14px;
+            color: #e8a838;
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        /* SIGN UP */
+        .signup {
+            background: linear-gradient(135deg, #e8a838 0%, #f5c460 100%);
+            padding: 64px 32px;
+            text-align: center;
+            color: white;
+        }
+
+        .signup h2 {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .signup p {
+            font-size: 18px;
+            margin-bottom: 32px;
+            opacity: 0.92;
+        }
+
+        .signup-form {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 480px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .signup-form h3 {
+            color: #e8a838;
+            font-size: 22px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #6b5a3a;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #f5e6c0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #3a2e1a;
+            background: #fdf8ee;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .form-group input:focus { border-color: #e8a838; }
+
+        .signup-form button {
+            width: 100%;
+            padding: 14px;
+            background: #e8a838;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .signup-form button:hover { opacity: 0.88; }
+
+        .signin-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #6b5a3a;
+        }
+
+        .signin-link a { color: #e8a838; text-decoration: none; }
+
+        .error { color: #e83838; font-size: 14px; margin-top: 8px; display: none; }
+        .success { color: #27ae60; font-size: 14px; margin-top: 8px; display: none; text-align: center; }
+
+        /* DONORS */
+        .donors {
+            padding: 64px 32px;
+            background: #fdf8ee;
+            text-align: center;
+        }
+
+        .donors h2 {
+            font-size: 32px;
+            color: #e8a838;
+            margin-bottom: 16px;
+        }
+
+        .donors p {
+            font-size: 17px;
+            color: #6b5a3a;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            line-height: 1.7;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #3a2e1a;
+            color: #f5e6c0;
+            padding: 32px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        footer a { color: #e8a838; text-decoration: none; }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 32px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <a href="/" class="logo">SpeakingWells</a>
+        <div class="nav-links">
+            <a href="#how">How It Works</a>
+            <a href="#stories">Stories</a>
+            <a href="#donors">Support Us</a>
+            <a href="#signup" class="btn" style="padding: 8px 20px; font-size: 14px;">Sign Up Free</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h1>Because everyone deserves<br>to be <span>noticed</span>.</h1>
+        <p>SpeakingWells gives non-verbal individuals a simple card that says:</p>
+        <p><h2>"I see you"</h2></p>
+        <p>and lets the world say it back.</p>
+        <div class="hero-buttons">
+            <a href="#signup" class="btn">Get Your Free Cards</a>
+            <a href="#how" class="btn btn-outline">Learn More</a>
+        </div>
+    </section>
+
+    <!-- WHAT IS IT -->
+    <section class="what">
+        <h2>What is SpeakingWells?</h2>
+        <p>Many people are non-verbal, they communicate differently, but they notice the world around them just as deeply as anyone else. SpeakingWells gives them a beautifully simple card to hand to anyone they meet.</p>
+        <p>When someone receives a card, they can scan a QR code to send a message back. That message goes straight to the family's inbox.</p>
+
+        <div class="card-preview">
+            <img src="/static/images/brogan-card.jpg" style="max-width: 100%; border-radius: 8px;">
+        <p style="font-size: 20px; color: #aaa;">Brogan's card</br>The one that started it all.</p>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how" id="how">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="number">1</div>
+                <h3>Sign Up Free</h3>
+                <p>Create a profile for your loved one. Choose a color scheme and personalize their card message.</p>
+            </div>
+            <div class="step">
+                <div class="number">2</div>
+                <h3>We Send Your Cards</h3>
+                <p>We print and mail personalized cards with a unique QR code — completely free.</p>
+            </div>
+            <div class="step">
+                <div class="number">3</div>
+                <h3>Connections Happen</h3>
+                <p>When someone scans the card, they can send a message. You get an email the moment someone reaches out.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STORIES -->
+    <section class="story" id="stories">
+        <h2>Real Connections</h2>
+
+        <div class="quote">
+            <p>"You don't know me, and we haven't met. This evening you were shopping at Care-A-Lot pet supplies and met a young lady that works there, my daughter Gabrielle. She has a traumatic brain injury. I want to thank you for not just making her smile, but for touching her heart. The smile on her face is one I don't see often."</p>
+            <div class="attribution">— Elany, mother of Gabrielle</div>
+        </div>
+
+        <div class="quote">
+            <p>"We were at a restaurant and Brogan handed a card to a lady. She asked him his name and then looked at me like everyone does. But Brogan pointed to his card. She read it, forgot all about her date, and wanted to talk to Brogan. She said he made her whole day."</p>
+            <div class="attribution">— Brodie, Brogan's dad</div>
+        </div>
+    </section>
+
+    <!-- SIGN UP -->
+    <section class="signup" id="signup">
+        <h2>Get Your Free Cards</h2>
+        <p>Sign up in minutes. Cards are free. Always.</p>
+
+        <div class="signup-form">
+            <h3>Create Your Account</h3>
+            <div class="form-group">
+                <label>Your Name</label>
+                <input type="text" id="reg-name" placeholder="Your full name">
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="reg-email" placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="reg-password" placeholder="Choose a password">
+            </div>
+            <div class="form-group">
+                <label>Mailing Address (so we can send your cards)</label>
+                <input type="text" id="reg-address" placeholder="123 Main St, City, State, ZIP">
+            </div>
+            <div class="error" id="reg-error"></div>
+            <div class="success" id="reg-success"></div>
+            <button onclick="register()">Create My Account →</button>
+            <div class="signin-link">Already have an account? <a href="/login">Sign in</a></div>
+        </div>
+    </section>
+
+    <!-- DONORS -->
+    <section class="donors" id="donors">
+        <h2>Help Us Reach More Families</h2>
+        <p>SpeakingWells is a nonprofit. Cards are always free to families. Your donation covers printing, mailing, and keeping the lights on so every non-verbal person who wants a card can have one.</p>
+        <a href="mailto:hello@speakingwells.org" class="btn">Contact Us to Donate</a>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <p><a href="/">SpeakingWells</a> - Because everyone deserves to be noticed.</p>
+        <p style="margin-top: 8px;">
+            <a href="/card/brogan">See Brogan's Card</a> · 
+            <a href="mailto:hello@speakingwells.org">hello@speakingwells.org</a> · 
+            <a href="mailto:hello@speakingwells.org?subject=Donation">Donate</a>
+        </p>
+    </footer>
+
+    <script>
+        const API = 'https://speakingwells.org';
+        //const API = 'http://127.0.0.1:8000';
+
+        async function register() {
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const address = document.getElementById('reg-address').value.trim();
+            const errorEl = document.getElementById('reg-error');
+            const successEl = document.getElementById('reg-success');
+
+            errorEl.style.display = 'none';
+            successEl.style.display = 'none';
+
+            if (!email || !password) {
+                errorEl.textContent = 'Email and password are required.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const btn = document.querySelector('.signup-form button');
+            btn.textContent = 'Creating account...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, shipping_address: address })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    successEl.textContent = 'Account created! Check your email to get started.';
+                    successEl.style.display = 'block';
+                    btn.textContent = 'Account Created!';
+                } else {
+                    errorEl.textContent = data.detail || 'Something went wrong.';
+                    errorEl.style.display = 'block';
+                    btn.textContent = 'Create My Account →';
+                    btn.disabled = false;
+                }
+            } catch(e) {
+                errorEl.textContent = 'Connection error. Please try again.';
+                errorEl.style.display = 'block';
+                btn.textContent = 'Create My Account →';
+                btn.disabled = false;
+            }
+        }
+    </script>
+
+</body>
+</html>
