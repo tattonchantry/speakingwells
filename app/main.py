@@ -1,3 +1,5 @@
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from fastapi import FastAPI, HTTPException, Depends
 from app.email import send_message_notification
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -11,6 +13,8 @@ import qrcode
 import io
 
 app = FastAPI(title="SpeakingWells API")
+
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -69,12 +73,16 @@ def create_cardholder(cardholder: CardholderCreate, account_id: str = Depends(ge
     }).execute()
     return result.data[0]
 
-@app.get("/card/{slug}")
-def get_card(slug: str):
-    result = supabase.table("cardholders").select("name, slug, card_message, photo_url").eq("slug", slug).execute()
+@app.get("/card/{slug}/data")
+def get_card_data(slug: str):
+    result = supabase.table("cardholders").select("name, slug, card_message, photo_url, color_scheme").eq("slug", slug).execute()
     if not result.data:
         raise HTTPException(status_code=404, detail="Card not found")
     return result.data[0]
+
+@app.get("/card/{slug}")
+def get_card_page(slug: str):
+    return FileResponse("frontend/card/index.html")
 
 @app.post("/card/{slug}/message")
 def send_message(slug: str, message: MessageCreate):

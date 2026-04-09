@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeakingWells</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        /* Color schemes */
+        .amber { --bg: #fdf8ee; --primary: #e8a838; --secondary: #f5e6c0; --text: #3a2e1a; --btn: #e8a838; --btn-text: #fff; }
+        .ocean { --bg: #eef6fb; --primary: #2980b9; --secondary: #c5e3f5; --text: #1a2a3a; --btn: #2980b9; --btn-text: #fff; }
+        .forest { --bg: #eef8f0; --primary: #27ae60; --secondary: #c5efd0; --text: #1a3a20; --btn: #27ae60; --btn-text: #fff; }
+        .rose { --bg: #fef0f3; --primary: #e8386a; --secondary: #fcc5d5; --text: #3a1a20; --btn: #e8386a; --btn-text: #fff; }
+        .slate { --bg: #f0f0f8; --primary: #6c5ce7; --secondary: #d5d0f8; --text: #1a1a3a; --btn: #6c5ce7; --btn-text: #fff; }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            max-width: 420px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--primary);
+            padding: 32px 24px 24px;
+            text-align: center;
+            color: white;
+        }
+
+        .card-header img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            margin-bottom: 12px;
+        }
+
+        .card-header .avatar-placeholder {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 12px;
+            border: 3px solid white;
+        }
+
+        .card-header h1 {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .card-header p {
+            font-size: 15px;
+            opacity: 0.92;
+            line-height: 1.5;
+        }
+
+        .card-body {
+            padding: 28px 24px;
+        }
+
+        .card-body h2 {
+            font-size: 16px;
+            color: var(--primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid var(--secondary);
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 12px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        textarea {
+            height: 100px;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--btn);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.88; }
+
+        .optional {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .thank-you {
+            display: none;
+            text-align: center;
+            padding: 40px 24px;
+        }
+
+        .thank-you .heart {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .thank-you h2 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 22px;
+        }
+
+        .thank-you p {
+            color: var(--text);
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 16px;
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body class="amber">
+    <div class="card">
+        <div class="card-header">
+            <div class="avatar-placeholder" id="avatar">💛</div>
+            <h1 id="name">Loading...</h1>
+            <p id="message"></p>
+        </div>
+        <div class="card-body">
+            <h2>Send them a message</h2>
+            <span class="optional">Your name (optional)</span>
+            <input type="text" id="sender_name" placeholder="Your name">
+            <span class="optional">Your email (optional — so they can reply)</span>
+            <input type="email" id="sender_email" placeholder="your@email.com">
+            <textarea id="message_body" placeholder="Write your message here..."></textarea>
+            <button onclick="sendMessage()">Send Message 💛</button>
+        </div>
+        <div class="thank-you" id="thank-you">
+            <div class="heart">💛</div>
+            <h2>Message Sent!</h2>
+            <p>Thank you for taking a moment to connect. You just made someone's day a little brighter.</p>
+        </div>
+    </div>
+    <div class="footer">
+        Powered by <a href="https://speakingwells.org">SpeakingWells</a> — because everyone deserves to be noticed.
+    </div>
+
+    <script>
+        const API = 'https://speakingwells.onrender.com';
+        //const API = 'http://127.0.0.1:8000';
+        const slug = window.location.pathname.split('/').pop() || 'brogan';
+
+        const schemes = {
+            amber: '💛', ocean: '💙', forest: '💚', rose: '💗', slate: '💜'
+        };
+
+        async function loadCard() {
+            try {
+                const res = await fetch(`${API}/card/${slug}/data`);
+                if (!res.ok) { document.getElementById('name').textContent = 'Card not found'; return; }
+                const data = await res.json();
+
+                document.title = `${data.name} | SpeakingWells`;
+                document.getElementById('name').textContent = `Hi! I'm ${data.name}`;
+                document.getElementById('message').textContent = data.card_message;
+
+                const scheme = data.color_scheme || 'amber';
+                document.body.className = scheme;
+                document.getElementById('avatar').textContent = schemes[scheme] || '💛';
+
+                if (data.photo_url && data.photo_url !== 'string') {
+                    const img = document.createElement('img');
+                    img.src = data.photo_url;
+                    img.alt = data.name;
+                    document.getElementById('avatar').replaceWith(img);
+                }
+
+                const btn = document.querySelector('button');
+                btn.textContent = `Send Message ${schemes[scheme] || '💛'}`;
+
+            } catch(e) {
+                document.getElementById('name').textContent = 'Something went wrong';
+            }
+        }
+
+        async function sendMessage() {
+            const body = document.getElementById('message_body').value.trim();
+            if (!body) { alert('Please write a message first!'); return; }
+
+            const btn = document.querySelector('button');
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API}/card/${slug}/message`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender_name: document.getElementById('sender_name').value || null,
+                        sender_email: document.getElementById('sender_email').value || null,
+                        message_body: body
+                    })
+                });
+
+                if (res.ok) {
+                    document.querySelector('.card-body').style.display = 'none';
+                    document.getElementById('thank-you').style.display = 'block';
+                } else {
+                    btn.textContent = 'Try Again';
+                    btn.disabled = false;
+                }
+            } catch(e) {
+                btn.textContent = 'Try Again';
+                btn.disabled = false;
+            }
+        }
+
+        loadCard();
+    </script>
+</body>
+</html>
