@@ -31,3 +31,26 @@ def send_message_notification(to_email: str, cardholder_name: str, sender_name: 
     }
     
     resend.Emails.send(params)
+
+def send_welcome_email(to_email: str):
+    params = {
+        "from": f"SpeakingWells <{FROM_EMAIL}>",
+        "to": [to_email],
+        "subject": "Welcome to SpeakingWells!",
+        "html": f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2 style="color: #e8a838;">Welcome to SpeakingWells! 💛</h2>
+            <p>Thank you for signing up. Your account is ready and your card page is live.</p>
+            <p style="margin-top: 16px;">Here is what happens next:</p>
+            <ol style="margin-top: 12px; line-height: 2;">
+                <li>Within 24 hours we will email you a proof of your card design</li>
+                <li>Reply to approve it</li>
+                <li>250 free cards will be mailed to your address within 5-7 business days</li>
+            </ol>
+            <p style="margin-top: 24px;">If you have any questions reply to this email and we will get back to you.</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            <p style="color: #999; font-size: 12px;">SpeakingWells - Because everyone deserves to be noticed.</p>
+        </div>
+        """
+    }
+    resend.Emails.send(params)

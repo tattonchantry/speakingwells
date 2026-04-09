@@ -1,3 +1,4 @@
+from app.email import send_message_notification, send_welcome_email
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi import FastAPI, HTTPException, Depends
@@ -46,6 +47,7 @@ def register(account: AccountCreate):
         "hashed_password": hashed,
         "shipping_address": account.shipping_address
     }).execute()
+    send_welcome_email(account.email)
     return {"message": "Account created successfully"}
 
 @app.post("/login")
