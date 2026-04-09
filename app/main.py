@@ -139,7 +139,3 @@ def get_qr_image(slug: str):
     buffer.seek(0)
     
     return StreamingResponse(buffer, media_type="image/png")
-
-@app.get("/")
-def home():
-    return FileResponse("frontend/index.html")
