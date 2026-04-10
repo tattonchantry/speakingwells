@@ -161,6 +161,14 @@
             margin: 32px 0;
         }
 
+        .amber { --primary: #e8a838; --secondary: #f5e6c0; --bg: #fdf8ee; }
+        .ocean { --primary: #2980b9; --secondary: #c5e3f5; --bg: #eef6fb; }
+        .forest { --primary: #27ae60; --secondary: #c5efd0; --bg: #eef8f0; }
+        .rose { --primary: #e8386a; --secondary: #fcc5d5; --bg: #fef0f3; }
+        .slate { --primary: #6c5ce7; --secondary: #d5d0f8; --bg: #f0f0f8; }
+
+        body { background: var(--bg, linear-gradient(135deg, #fdf8ee 0%, #f5e6c0 100%)); }
+
         .btn {
             display: block;
             width: 100%;
@@ -255,6 +263,8 @@
 
             <a id="visit-btn" href="#" class="btn" target="_blank">Visit Your Card Page</a>
             <a href="/" class="btn btn-outline">Back to Home</a>
+            
+            <a href="/dashboard" class="btn btn-outline">Go to My Dashboard</a>
 
         </div>
     </div>
@@ -264,6 +274,11 @@
         //const API = 'http://127.0.0.1:8000';
 
         const slug = localStorage.getItem('slug');
+
+        const schemeColors = {
+            amber: '#e8a838', ocean: '#2980b9',
+            forest: '#27ae60', rose: '#e8386a', slate: '#6c5ce7'
+        };
 
         if (!slug) {
             window.location.href = '/';
@@ -277,6 +292,23 @@
             document.getElementById('header-name').textContent = `Your card page is live at speakingwells.org/card/${slug}`;
             document.getElementById('qr-img').src = `${API}/card/${slug}/qr.png`;
         }
+        
+        async function loadScheme() {
+            try {
+                const res = await fetch(`${API}/dashboard/data`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.cardholder && data.cardholder.color_scheme) {
+                    document.body.className = data.cardholder.color_scheme;
+                    // Update header background
+                    document.querySelector('.container-header').style.background = 
+                        schemeColors[data.cardholder.color_scheme] || '#e8a838';
+                }
+            } catch(e) {}
+        }
+
+        loadScheme();
     </script>
 
 </body>

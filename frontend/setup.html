@@ -318,6 +318,28 @@
         const token = localStorage.getItem('token');
         if (!token) window.location.href = '/';
 
+        // Load existing color scheme if they have one
+        async function loadExistingScheme() {
+            try {
+                const res = await fetch(`${API}/dashboard/data`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.cardholder && data.cardholder.color_scheme) {
+                    const scheme = data.cardholder.color_scheme;
+                    selectedScheme = scheme;
+                    document.querySelectorAll('.scheme').forEach(s =>  s.classList.remove('selected'));
+                    const el = document.querySelector(`[onclick="selectScheme('${scheme}', this)"]`);
+                    if (el) el.classList.add('selected');
+                    document.getElementById('preview-header').style.background = schemeColors[scheme];
+                }
+            } catch(e) {
+                // No existing cardholder, keep amber default
+            }
+        }
+
+        loadExistingScheme();
+
         function selectScheme(scheme, el) {
             selectedScheme = scheme;
             document.querySelectorAll('.scheme').forEach(s => s.classList.remove('selected'));

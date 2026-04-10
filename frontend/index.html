@@ -519,21 +519,17 @@
                 const data = await res.json();
 
 if (res.ok) {
-                    const loginRes = await fetch(`${API}/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: `username=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-                    });
-                    const loginData = await loginRes.json();
-                    localStorage.setItem('token', loginData.access_token);
-                    window.location.href = '/setup';
+                    successEl.textContent = 'Account created! Please check your email to verify your account before signing in.';
+                    successEl.style.display = 'block';
+                    btn.textContent = 'Check Your Email';
+                    btn.disabled = true;
                 } else {
                     errorEl.textContent = data.detail || 'Something went wrong.';
                     errorEl.style.display = 'block';
                     btn.textContent = 'Create My Account →';
                     btn.disabled = false;
                 }
-                } catch(e) {
+            } catch(e) {
                 errorEl.textContent = 'Connection error. Please try again.';
                 errorEl.style.display = 'block';
                 btn.textContent = 'Create My Account →';

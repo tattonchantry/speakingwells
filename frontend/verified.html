@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verified - SpeakingWells</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            color: #3a2e1a;
+            background: linear-gradient(135deg, #fdf8ee 0%, #f5e6c0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e8a838;
+            text-decoration: none;
+            margin-bottom: 32px;
+            display: block;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            overflow: hidden;
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+        }
+
+        .container-header {
+            background: #e8a838;
+            padding: 40px 32px;
+            color: white;
+        }
+
+        .container-header .emoji {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .container-header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .container-header p {
+            opacity: 0.92;
+            font-size: 16px;
+        }
+
+        .body {
+            padding: 32px;
+        }
+
+        .body p {
+            font-size: 16px;
+            color: #6b5a3a;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: #e8a838;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+            transition: opacity 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .btn:hover { opacity: 0.88; }
+
+        .btn-outline {
+            background: white;
+            color: #e8a838;
+            border: 2px solid #e8a838;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="/" class="logo">SpeakingWells</a>
+
+    <div class="container">
+        <div class="container-header">
+            <div class="emoji">💛</div>
+            <h1>Email Verified!</h1>
+            <p>You're all set. Time to set up your card.</p>
+        </div>
+        <div class="body">
+            <p>Your email has been verified. Sign in to create your loved one's card page and get your free cards.</p>
+            <a href="/login" class="btn">Sign In Now</a>
+            <a href="/" class="btn btn-outline">Back to Home</a>
+        </div>
+    </div>
+
+</body>
+</html>

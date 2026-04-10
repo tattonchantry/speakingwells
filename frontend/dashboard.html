@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SpeakingWells</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            color: #3a2e1a;
+            background: var(--bg, #f9f5ee);
+            min-height: 100vh;
+        }
+
+        /* Color schemes */
+        .amber { --bg: #fdf8ee; --primary: #e8a838; --secondary: #f5e6c0; --text: #3a2e1a; }
+        .ocean { --bg: #eef6fb; --primary: #2980b9; --secondary: #c5e3f5; --text: #1a2a3a; }
+        .forest { --bg: #eef8f0; --primary: #27ae60; --secondary: #c5efd0; --text: #1a3a20; }
+        .rose { --bg: #fef0f3; --primary: #e8386a; --secondary: #fcc5d5; --text: #3a1a20; }
+        .slate { --bg: #f0f0f8; --primary: #6c5ce7; --secondary: #d5d0f8; --text: #1a1a3a; }
+
+        nav {
+            background: var(--primary, #e8a838);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-right a {
+            font-size: 14px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+        }
+
+        .nav-right a:hover { color: white; }
+
+        .signout {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+
+        .signout:hover { color: white; }
+
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        .welcome {
+            margin-bottom: 32px;
+        }
+
+        .welcome h1 {
+            font-size: 28px;
+            color: var(--primary, #e8a838);
+            margin-bottom: 4px;
+        }
+
+        .welcome p {
+            color: #6b5a3a;
+            font-size: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 640px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-top: 4px solid var(--primary, #e8a838);
+        }
+
+        .card h2 {
+            font-size: 14px;
+            color: var(--primary, #e8a838);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-url {
+            font-size: 15px;
+            color: var(--primary, #e8a838);
+            text-decoration: none;
+            word-break: break-all;
+            font-weight: bold;
+        }
+
+        .card-url:hover { text-decoration: underline; }
+
+        .qr-img {
+            width: 140px;
+            height: 140px;
+            border: 2px solid var(--secondary, #f5e6c0);
+            border-radius: 8px;
+            padding: 6px;
+            margin-top: 12px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary, #e8a838);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.2s;
+            margin-top: 16px;
+        }
+
+        .btn:hover { opacity: 0.88; }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .stat {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--primary, #e8a838);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        /* COLOR SCHEME PICKER */
+        .schemes {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .scheme {
+            cursor: pointer;
+            border-radius: 10px;
+            border: 3px solid transparent;
+            overflow: hidden;
+            width: 60px;
+            text-align: center;
+            transition: border 0.2s;
+        }
+
+        .scheme.selected { border-color: #3a2e1a; }
+
+        .scheme-swatch {
+            height: 36px;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .scheme-label {
+            font-size: 10px;
+            padding: 3px;
+            background: #fdf8ee;
+            color: #3a2e1a;
+        }
+
+        .save-scheme {
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: var(--primary, #e8a838);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: none;
+        }
+
+        .save-scheme:hover { opacity: 0.88; }
+        .saved-msg { font-size: 13px; color: #27ae60; margin-top: 8px; display: none; }
+
+        /* MESSAGES */
+        .messages-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-top: 4px solid var(--primary, #e8a838);
+        }
+
+        .messages-section h2 {
+            font-size: 14px;
+            color: var(--primary, #e8a838);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .message-item {
+            border-left: 3px solid var(--primary, #e8a838);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            background: var(--bg, #fdf8ee);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .message-item .sender {
+            font-size: 13px;
+            color: var(--primary, #e8a838);
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .message-item .body {
+            font-size: 15px;
+            color: #3a2e1a;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .message-item .date {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 8px;
+        }
+
+        .message-item .reply-link {
+            font-size: 13px;
+            color: var(--primary, #e8a838);
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .no-messages {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+            font-size: 15px;
+        }
+
+        .no-messages .emoji { font-size: 40px; margin-bottom: 12px; }
+        .loading { text-align: center; padding: 40px; color: #aaa; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">SpeakingWells</a>
+        <div class="nav-right">
+            <a href="/">Home</a>
+            <button class="signout" onclick="signout()">Sign Out</button>
+        </div>
+    </nav>
+
+    <div class="page">
+
+        <div class="welcome">
+            <h1 id="welcome-title">Dashboard</h1>
+            <p id="welcome-sub">Loading your card information...</p>
+        </div>
+
+        <div class="grid">
+
+            <!-- CARD INFO -->
+            <div class="card">
+                <h2>Your Card Page</h2>
+                <div id="card-info" class="loading">Loading...</div>
+            </div>
+
+            <!-- STATS -->
+            <div class="card">
+                <h2>Messages Received</h2>
+                <div id="stats" class="loading">Loading...</div>
+            </div>
+
+        </div>
+
+        <!-- COLOR SCHEME -->
+        <div class="card" style="margin-bottom: 24px;">
+            <h2>Color Scheme</h2>
+            <p style="font-size: 14px; color: #6b5a3a; margin-bottom: 12px;">Change the look of your card page. This updates immediately for anyone who scans the QR code.</p>
+            <div class="schemes">
+                <div class="scheme" id="scheme-amber" onclick="selectScheme('amber', this)">
+                    <div class="scheme-swatch" style="background: linear-gradient(135deg, #e8a838, #f5c460);"></div>
+                    <div class="scheme-label">Amber</div>
+                </div>
+                <div class="scheme" id="scheme-ocean" onclick="selectScheme('ocean', this)">
+                    <div class="scheme-swatch" style="background: linear-gradient(135deg, #2980b9, #5dade2);"></div>
+                    <div class="scheme-label">Ocean</div>
+                </div>
+                <div class="scheme" id="scheme-forest" onclick="selectScheme('forest', this)">
+                    <div class="scheme-swatch" style="background: linear-gradient(135deg, #27ae60, #58d68d);"></div>
+                    <div class="scheme-label">Forest</div>
+                </div>
+                <div class="scheme" id="scheme-rose" onclick="selectScheme('rose', this)">
+                    <div class="scheme-swatch" style="background: linear-gradient(135deg, #e8386a, #f1948a);"></div>
+                    <div class="scheme-label">Rose</div>
+                </div>
+                <div class="scheme" id="scheme-slate" onclick="selectScheme('slate', this)">
+                    <div class="scheme-swatch" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);"></div>
+                    <div class="scheme-label">Slate</div>
+                </div>
+            </div>
+            <button class="save-scheme" id="save-scheme-btn" onclick="saveScheme()">Save Color Scheme</button>
+            <div class="saved-msg" id="saved-msg">Saved!</div>
+        </div>
+
+        <!-- MESSAGES -->
+        <div class="messages-section">
+            <h2>Recent Messages</h2>
+            <div id="messages" class="loading">Loading...</div>
+        </div>
+
+    </div>
+
+    <script>
+        const API = 'https://speakingwells.org';
+        //const API = 'http://127.0.0.1:8000';
+
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login';
+
+        const schemeColors = {
+            amber: '#e8a838', ocean: '#2980b9',
+            forest: '#27ae60', rose: '#e8386a', slate: '#6c5ce7'
+        };
+
+        let currentScheme = 'amber';
+        let selectedScheme = 'amber';
+        let cardholderData = null;
+
+        function signout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('slug');
+            window.location.href = '/';
+        }
+
+        function applyScheme(scheme) {
+            document.body.className = scheme;
+        }
+
+        function selectScheme(scheme, el) {
+            selectedScheme = scheme;
+            document.querySelectorAll('.scheme').forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected');
+            applyScheme(scheme);
+            if (scheme !== currentScheme) {
+                document.getElementById('save-scheme-btn').style.display = 'inline-block';
+                document.getElementById('saved-msg').style.display = 'none';
+            } else {
+                document.getElementById('save-scheme-btn').style.display = 'none';
+            }
+        }
+
+        async function saveScheme() {
+            if (!cardholderData) return;
+            const btn = document.getElementById('save-scheme-btn');
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API}/cardholder`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        name: cardholderData.name,
+                        slug: cardholderData.slug,
+                        card_message: cardholderData.card_message,
+                        color_scheme: selectedScheme,
+                        photo_url: cardholderData.photo_url
+                    })
+                });
+
+                if (res.ok) {
+                    currentScheme = selectedScheme;
+                    cardholderData.color_scheme = selectedScheme;
+                    btn.style.display = 'none';
+                    btn.textContent = 'Save Color Scheme';
+                    btn.disabled = false;
+                    document.getElementById('saved-msg').style.display = 'block';
+                    setTimeout(() => document.getElementById('saved-msg').style.display = 'none', 3000);
+                }
+            } catch(e) {
+                btn.textContent = 'Save Color Scheme';
+                btn.disabled = false;
+            }
+        }
+
+        function formatDate(str) {
+            const d = new Date(str);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        async function loadDashboard() {
+            try {
+                const res = await fetch(`${API}/dashboard/data`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.status === 401) {
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const data = await res.json();
+                const ch = data.cardholder;
+                const messages = data.messages;
+
+                if (!ch) {
+                    document.getElementById('welcome-title').textContent = 'Welcome!';
+                    document.getElementById('welcome-sub').textContent = 'You have not set up your card yet.';
+                    document.getElementById('card-info').innerHTML = '<a href="/setup" class="btn">Set Up Your Card</a>';
+                    document.getElementById('stats').innerHTML = '';
+                    document.getElementById('messages').innerHTML = '';
+                    return;
+                }
+
+                cardholderData = ch;
+
+                // Apply color scheme
+                currentScheme = ch.color_scheme || 'amber';
+                selectedScheme = currentScheme;
+                applyScheme(currentScheme);
+                const schemeEl = document.getElementById(`scheme-${currentScheme}`);
+                if (schemeEl) schemeEl.classList.add('selected');
+
+                // Welcome
+                document.getElementById('welcome-title').textContent = `Welcome back!`;
+                document.getElementById('welcome-sub').textContent = `Managing ${ch.name}'s card.`;
+                localStorage.setItem('slug', ch.slug);
+
+                // Card info
+                const fullUrl = `https://speakingwells.org/card/${ch.slug}`;
+                const displayUrl = `speakingwells.org/card/${ch.slug}`;
+
+                document.getElementById('card-info').innerHTML = `
+                    <a href="${fullUrl}" target="_blank" class="card-url">${displayUrl}</a>
+                    <br>
+                    <img src="${API}/card/${ch.slug}/qr.png" class="qr-img" alt="QR Code">
+                    <br>
+                    <a href="${fullUrl}" target="_blank" class="btn btn-small">Visit Card Page</a>
+                `;
+
+                // Stats
+                document.getElementById('stats').innerHTML = `
+                    <div class="stat">${messages.length}</div>
+                    <div class="stat-label">total messages received</div>
+                `;
+
+                // Messages
+                if (messages.length === 0) {
+                    document.getElementById('messages').innerHTML = `
+                        <div class="no-messages">
+                            <div class="emoji">💛</div>
+                            <p>No messages yet. Once someone scans ${ch.name}'s card and sends a message it will appear here.</p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('messages').innerHTML = messages.map(m => `
+                        <div class="message-item">
+                            <div class="sender">${m.sender_name || 'Anonymous'} ${m.sender_email ? '(' + m.sender_email + ')' : ''}</div>
+                            <div class="body">"${m.message_body}"</div>
+                            <div class="date">${formatDate(m.sent_at)}</div>
+                            ${m.sender_email ? `<a href="mailto:${m.sender_email}" class="reply-link">Reply to ${m.sender_name || 'this person'}</a>` : ''}
+                        </div>
+                    `).join('');
+                }
+
+            } catch(e) {
+                document.getElementById('card-info').innerHTML = 'Could not load dashboard. Please refresh.';
+            }
+        }
+
+        loadDashboard();
+    </script>
+
+</body>
+</html>

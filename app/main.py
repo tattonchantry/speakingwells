@@ -1,8 +1,7 @@
-from app.email import send_message_notification, send_welcome_email
+from app.email import send_message_notification, send_welcome_email, send_verification_email
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi import FastAPI, HTTPException, Depends
-from app.email import send_message_notification
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import supabase
@@ -10,6 +9,7 @@ from app.models import *
 from app.auth import hash_password, verify_password, create_access_token, decode_access_token
 from app.qr import generate_qr_code
 from fastapi.responses import StreamingResponse
+import secrets
 import qrcode
 import io
 
@@ -35,31 +35,6 @@ def get_current_account(token: str = Depends(oauth2_scheme)):
 @app.get("/")
 def root():
     return FileResponse("frontend/index.html")
-
-@app.post("/register")
-def register(account: AccountCreate):
-    existing = supabase.table("accounts").select("id").eq("email", account.email).execute()
-    if existing.data:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    hashed = hash_password(account.password)
-    result = supabase.table("accounts").insert({
-        "email": account.email,
-        "hashed_password": hashed,
-        "shipping_address": account.shipping_address
-    }).execute()
-    send_welcome_email(account.email)
-    return {"message": "Account created successfully"}
-
-@app.post("/login")
-def login(form: OAuth2PasswordRequestForm = Depends()):
-    result = supabase.table("accounts").select("*").eq("email", form.username).execute()
-    if not result.data:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    account = result.data[0]
-    if not verify_password(form.password, account["hashed_password"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    token = create_access_token({"sub": account["id"]})
-    return {"access_token": token, "token_type": "bearer"}
 
 @app.post("/cardholder")
 def create_cardholder(cardholder: CardholderCreate, account_id: str = Depends(get_current_account)):
@@ -155,3 +130,80 @@ def check_slug(slug: str):
 @app.get("/welcome")
 def welcome():
     return FileResponse("frontend/welcome.html")
+
+@app.get("/login")
+def login_page():
+    return FileResponse("frontend/login.html")
+
+@app.get("/dashboard/data")
+def get_dashboard_data(account_id: str = Depends(get_current_account)):
+    cardholder = supabase.table("cardholders").select("*").eq("account_id", account_id).execute()
+    if not cardholder.data:
+        return {"cardholder": None, "messages": []}
+    ch = cardholder.data[0]
+    messages = supabase.table("messages").select("*").eq("cardholder_id", ch["id"]).order("sent_at", desc=True).limit(20).execute()
+    return {"cardholder": ch, "messages": messages.data}
+
+@app.get("/dashboard")
+def dashboard():
+    return FileResponse("frontend/dashboard.html")
+
+@app.put("/cardholder")
+def update_cardholder(cardholder: CardholderCreate, account_id: str = Depends(get_current_account)):
+    existing = supabase.table("cardholders").select("id").eq("account_id", account_id).execute()
+    if not existing.data:
+        raise HTTPException(status_code=404, detail="Cardholder not found")
+    result = supabase.table("cardholders").update({
+        "card_message": cardholder.card_message,
+        "color_scheme": cardholder.color_scheme,
+        "photo_url": cardholder.photo_url
+    }).eq("account_id", account_id).execute()
+    return result.data[0]
+
+@app.post("/register")
+def register(account: AccountCreate):
+    existing = supabase.table("accounts").select("id").eq("email", account.email).execute()
+    if existing.data:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    hashed = hash_password(account.password)
+    verification_token = secrets.token_urlsafe(32)
+    result = supabase.table("accounts").insert({
+        "email": account.email,
+        "hashed_password": hashed,
+        "shipping_address": account.shipping_address,
+        "email_verified": False,
+        "verification_token": verification_token
+    }).execute()
+    print(f"DEBUG: Sending verification email to {account.email}")
+    send_verification_email(account.email, verification_token)
+    return {"message": "Account created. Please check your email to verify your account."}
+
+@app.get("/verify")
+def verify_email(token: str):
+    result = supabase.table("accounts").select("id, email_verified").eq("verification_token", token).execute()
+    if not result.data:
+        raise HTTPException(status_code=400, detail="Invalid verification token")
+    if result.data[0]["email_verified"]:
+        return FileResponse("frontend/login.html")
+    supabase.table("accounts").update({
+        "email_verified": True,
+        "verification_token": None
+    }).eq("verification_token", token).execute()
+    return FileResponse("frontend/verified.html")
+
+@app.post("/login")
+def login(form: OAuth2PasswordRequestForm = Depends()):
+    result = supabase.table("accounts").select("*").eq("email", form.username).execute()
+    if not result.data:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    account = result.data[0]
+    if not verify_password(form.password, account["hashed_password"]):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    if not account.get("email_verified"):
+        raise HTTPException(status_code=401, detail="Please verify your email before logging in")
+    token = create_access_token({"sub": account["id"]})
+    return {"access_token": token, "token_type": "bearer"}
+
+@app.get("/verified")
+def verified():
+    return FileResponse("frontend/verified.html")

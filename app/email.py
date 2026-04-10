@@ -54,3 +54,24 @@ def send_welcome_email(to_email: str):
         """
     }
     resend.Emails.send(params)
+
+def send_verification_email(to_email: str, token: str):
+    verify_url = f"https://speakingwells.org/verify?token={token}"
+    params = {
+        "from": f"SpeakingWells <{FROM_EMAIL}>",
+        "to": [to_email],
+        "subject": "Please verify your SpeakingWells email",
+        "html": f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2 style="color: #e8a838;">Almost there! 💛</h2>
+            <p>Thank you for signing up for SpeakingWells. Please verify your email address to get started.</p>
+            <div style="text-align: center; margin: 32px 0;">
+                <a href="{verify_url}" style="background: #e8a838; color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-size: 18px;">Verify My Email</a>
+            </div>
+            <p style="color: #999; font-size: 13px;">If you did not create a SpeakingWells account you can ignore this email.</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            <p style="color: #999; font-size: 12px;">SpeakingWells - Because everyone deserves to be noticed.</p>
+        </div>
+        """
+    }
+    resend.Emails.send(params)

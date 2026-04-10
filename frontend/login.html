@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - SpeakingWells</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            color: #3a2e1a;
+            background: linear-gradient(135deg, #fdf8ee 0%, #f5e6c0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e8a838;
+            text-decoration: none;
+            margin-bottom: 32px;
+            display: block;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            overflow: hidden;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .container-header {
+            background: #e8a838;
+            padding: 32px;
+            text-align: center;
+            color: white;
+        }
+
+        .container-header h1 {
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+
+        .container-header p {
+            opacity: 0.92;
+            font-size: 15px;
+        }
+
+        .form-body {
+            padding: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #6b5a3a;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #f5e6c0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #3a2e1a;
+            background: #fdf8ee;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .form-group input:focus { border-color: #e8a838; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #e8a838;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 8px;
+        }
+
+        button:hover { opacity: 0.88; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .error { color: #e83838; font-size: 14px; margin-top: 12px; display: none; }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6b5a3a;
+        }
+
+        .links a {
+            color: #e8a838;
+            text-decoration: none;
+        }
+
+        .links a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <a href="/" class="logo">SpeakingWells</a>
+
+    <div class="container">
+        <div class="container-header">
+            <h1>Welcome back</h1>
+            <p>Sign in to manage your card</p>
+        </div>
+
+        <div class="form-body">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="you@email.com" onkeydown="if(event.key==='Enter') login()">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Your password" onkeydown="if(event.key==='Enter') login()">
+            </div>
+            <div class="error" id="error"></div>
+            <button onclick="login()">Sign In</button>
+            <div class="links">
+                <p>Don't have an account? <a href="/#signup">Sign up free</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'https://speakingwells.org';
+        //const API = 'http://127.0.0.1:8000';
+
+        // Already logged in
+        if (localStorage.getItem('token')) window.location.href = '/dashboard';
+
+        async function login() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('error');
+
+            errorEl.style.display = 'none';
+
+            if (!email || !password) {
+                errorEl.textContent = 'Please enter your email and password.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const btn = document.querySelector('button');
+            btn.textContent = 'Signing in...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `username=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    window.location.href = '/dashboard';
+                } else {
+                    errorEl.textContent = 'Invalid email or password.';
+                    errorEl.style.display = 'block';
+                    btn.textContent = 'Sign In';
+                    btn.disabled = false;
+                }
+            } catch(e) {
+                errorEl.textContent = 'Connection error. Please try again.';
+                errorEl.style.display = 'block';
+                btn.textContent = 'Sign In';
+                btn.disabled = false;
+            }
+        }
+    </script>
+
+</body>
+</html>
