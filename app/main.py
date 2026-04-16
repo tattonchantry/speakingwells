@@ -1,4 +1,4 @@
-from app.email import send_message_notification, send_welcome_email, send_verification_email
+from app.email import send_message_notification, send_welcome_email, send_verification_email, send_admin_signup_notification, send_admin_card_notification, send_password_reset_email
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi import FastAPI, HTTPException, Depends
@@ -12,6 +12,8 @@ from fastapi.responses import StreamingResponse
 import secrets
 import qrcode
 import io
+import os
+from datetime import datetime, timedelta
 
 app = FastAPI(title="SpeakingWells API")
 
@@ -25,6 +27,8 @@ app.add_middleware(
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 
 def get_current_account(token: str = Depends(oauth2_scheme)):
     account_id = decode_access_token(token)
@@ -48,6 +52,22 @@ def create_cardholder(cardholder: CardholderCreate, account_id: str = Depends(ge
         "slug": cardholder.slug,
         "photo_url": cardholder.photo_url,
         "card_message": cardholder.card_message
+    }).execute()
+    account = supabase.table("accounts").select("email, shipping_address").eq("id", account_id).execute()
+    if account.data:
+        send_admin_card_notification(
+            to_email=ADMIN_EMAIL,
+            cardholder_name=cardholder.name,
+            slug=cardholder.slug,
+            user_email=account.data[0]["email"],
+            shipping_address=account.data[0]["shipping_address"],
+            card_message=cardholder.card_message,
+            color_scheme=cardholder.color_scheme
+        )
+    supabase.table("card_orders").insert({
+        "cardholder_id": result.data[0]["id"],
+        "quantity": 250,
+        "status": "pending"
     }).execute()
     return result.data[0]
 
@@ -176,6 +196,7 @@ def register(account: AccountCreate):
     }).execute()
     print(f"DEBUG: Sending verification email to {account.email}")
     send_verification_email(account.email, verification_token)
+    send_admin_signup_notification(ADMIN_EMAIL, account.email, account.shipping_address)
     return {"message": "Account created. Please check your email to verify your account."}
 
 @app.get("/verify")
@@ -207,3 +228,41 @@ def login(form: OAuth2PasswordRequestForm = Depends()):
 @app.get("/verified")
 def verified():
     return FileResponse("frontend/verified.html")
+
+@app.post("/forgot-password")
+def forgot_password(email: str):
+    result = supabase.table("accounts").select("id").eq("email", email).execute()
+    if not result.data:
+        return {"message": "If that email exists you will receive a reset link"}
+    token = secrets.token_urlsafe(32)
+    expires = (datetime.utcnow() + timedelta(hours=1)).isoformat()
+    supabase.table("accounts").update({
+        "reset_token": token,
+        "reset_token_expires": expires
+    }).eq("email", email).execute()
+    send_password_reset_email(email, token)
+    return {"message": "If that email exists you will receive a reset link"}
+
+@app.post("/reset-password")
+def reset_password(token: str, new_password: str):
+    result = supabase.table("accounts").select("*").eq("reset_token", token).execute()
+    if not result.data:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+    account = result.data[0]
+    if datetime.fromisoformat(account["reset_token_expires"]) < datetime.utcnow():
+        raise HTTPException(status_code=400, detail="Reset token has expired")
+    hashed = hash_password(new_password)
+    supabase.table("accounts").update({
+        "hashed_password": hashed,
+        "reset_token": None,
+        "reset_token_expires": None
+    }).eq("reset_token", token).execute()
+    return {"message": "Password reset successfully"}
+
+@app.get("/forgot-password")
+def forgot_password_page():
+    return FileResponse("frontend/forgot-password.html")
+
+@app.get("/reset-password")
+def reset_password_page():
+    return FileResponse("frontend/reset-password.html")
